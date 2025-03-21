@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'register_screen.dart';
 import 'login_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -17,15 +16,14 @@ class WelcomeScreen extends StatelessWidget {
               children: [
                 // Imagen del logo
                 Image.asset(
-                  'assets/images/welcome.png',
+                  'assets/images/welcome_parking.png',
                   height: 250,
                   width: 250,
                 ),
                 const SizedBox(height: 30),
-                
                 // Texto de bienvenida
                 Text(
-                  'BIENVENIDO AL PARKING DE LA\nUNIVERSIDAD DE JAÉN',
+                  'BIENVENIDO AL PARKING DE LA UNIVERSIDAD DE JAÉN',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 24,
@@ -35,37 +33,10 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 50),
                 
-                // Botón de Registrarse
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const RegisterScreen(),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: const Text(
-                      'REGISTRARSE',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                
                 // Botón de Iniciar Sesión
                 SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.7,
+                  width: MediaQuery.of(context).size.width * 0.5,
+                  height: 55,
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(
@@ -76,16 +47,20 @@ class WelcomeScreen extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[300],
-                      foregroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(15),
                       ),
+                      elevation: 2,
                     ),
                     child: const Text(
                       'INICIAR SESIÓN',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                      ),
                     ),
                   ),
                 ),
