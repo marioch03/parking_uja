@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'reservar_plaza_screen.dart';
 import 'welcome_screen.dart';
+import 'mis_reservas_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -50,8 +51,13 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                // TODO: Implementar navegación a mis reservas
                 Navigator.pop(context); // Cierra el drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MisReservasScreen(),
+                  ),
+                );
               },
             ),
             const Divider(),

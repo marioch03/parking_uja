@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/plaza.dart';
 import '../models/estado_plaza.dart';
+import 'confirmar_reserva_screen.dart';
 
 class ReservarPlazaScreen extends StatefulWidget {
   const ReservarPlazaScreen({super.key});
@@ -20,14 +21,10 @@ class _ReservarPlazaScreenState extends State<ReservarPlazaScreen> {
   }
 
   void _reservarPlaza(Plaza plaza) {
-    setState(() {
-      plaza.estado = EstadosPlaza.reservada;
-    });
-    // TODO: Implementar lógica de reserva con backend
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Plaza P-${plaza.id} reservada con éxito'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ConfirmarReservaScreen(plaza: plaza),
       ),
     );
   }
