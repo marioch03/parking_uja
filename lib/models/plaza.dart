@@ -8,6 +8,26 @@ class Plaza {
     required this.id,
     required this.estado,
   });
+
+  factory Plaza.fromJson(Map<String, dynamic> json) {
+    return Plaza(
+      id: json['id'],
+      estado: _parseEstado(json['estadoId']),
+    );
+  }
+
+  static EstadoPlaza _parseEstado(int estadoId) {
+    switch (estadoId) {
+      case 1:
+        return EstadosPlaza.libre;
+      case 2:
+        return EstadosPlaza.ocupada;
+      case 3:
+        return EstadosPlaza.reservada;
+      default:
+        return EstadosPlaza.libre;
+    }
+  }
 }
 
 // Datos de ejemplo
