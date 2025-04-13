@@ -10,23 +10,26 @@ class Plaza {
   });
 
   factory Plaza.fromJson(Map<String, dynamic> json) {
+    // El estado viene como un objeto completo desde el backend
+    final estadoJson = json['estado'] as Map<String, dynamic>;
+    
     return Plaza(
-      id: json['id'],
-      estado: _parseEstado(json['estadoId']),
+      id: json['id'] as int,
+      estado: EstadoPlaza(
+        id: estadoJson['id'] as int,
+        nombre: estadoJson['nombre'] as String,
+      ),
     );
   }
 
-  static EstadoPlaza _parseEstado(int estadoId) {
-    switch (estadoId) {
-      case 1:
-        return EstadosPlaza.libre;
-      case 2:
-        return EstadosPlaza.ocupada;
-      case 3:
-        return EstadosPlaza.reservada;
-      default:
-        return EstadosPlaza.libre;
-    }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'estado': {
+        'id': estado.id,
+        'nombre': estado.nombre,
+      },
+    };
   }
 }
 

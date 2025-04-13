@@ -161,7 +161,7 @@ class _ReservarPlazaScreenState extends State<ReservarPlazaScreen> {
                                 ),
                               ),
                               // Botón de reserva
-                              if (plaza.estado == EstadosPlaza.libre)
+                              if (plaza.estado.isLibre)
                                 ElevatedButton(
                                   onPressed: () => _reservarPlaza(plaza),
                                   style: ElevatedButton.styleFrom(
