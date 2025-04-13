@@ -30,14 +30,14 @@ public class reserva {
     private LocalDateTime fecha;
 
     @Column(name= "matricula")
-    private int matricula;
+    private String matricula;
 
 
     // Constructores
     public reserva() {
     }
 
-    public reserva(usuario usuario, plaza plaza,LocalDateTime fecha,int matricula) {
+    public reserva(usuario usuario, plaza plaza,LocalDateTime fecha,String matricula) {
         this.fecha=fecha;
         this.matricula=matricula;
         this.usuario=usuario;
@@ -75,6 +75,25 @@ public class reserva {
 
     public void setPlaza(plaza plaza) {
         this.plaza = plaza;
+    }
+
+    public String getMatricula() {
+        return matricula;
+    }
+
+    public void setMatricula(String matricula) {
+        this.matricula = matricula;
+    }
+
+    @Override
+    public String toString() {
+        return "Reserva{" +
+                "id=" + id +
+                ", fecha=" + fecha +
+                ", matricula='" + matricula + '\'' +
+                ", usuario=" + (usuario != null ? usuario.getId() : "null") +
+                ", plaza=" + (plaza != null ? plaza.getId() : "null") +
+                '}';
     }
 }
 

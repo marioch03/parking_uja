@@ -95,7 +95,7 @@ public class BackendController {
     //Metodo para reservar una plaza
     @PostMapping("/reservar")
     public ResponseEntity<String> postReservar(@RequestBody ReservaRequest reserva, @RequestHeader("Authorization") String token) {
-        int matricula = reserva.getMatricula();
+        String matricula = reserva.getMatricula();
         int plaza = reserva.getPlaza();
 
         // Obtener el usuario del token

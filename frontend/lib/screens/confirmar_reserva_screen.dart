@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/plaza.dart';
 import '../models/estado_plaza.dart';
-import '../models/reserva.dart';
+import '../services/reserva_service.dart';
+import 'home_screen.dart';
 
 class ConfirmarReservaScreen extends StatefulWidget {
   final Plaza plaza;
@@ -17,52 +19,59 @@ class ConfirmarReservaScreen extends StatefulWidget {
 
 class _ConfirmarReservaScreenState extends State<ConfirmarReservaScreen> {
   final _matriculaController = TextEditingController();
+  final _reservaService = ReservaService();
+  bool _isLoading = false;
+  String? _errorMessage;
 
-  void _confirmarReserva() {
+  Future<void> _confirmarReserva() async {
     if (_matriculaController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Por favor, introduce una matrícula'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      setState(() {
+        _errorMessage = 'Por favor, introduce una matrícula';
+      });
       return;
     }
 
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
     try {
-      // Crear nueva reserva
-      final nuevaReserva = Reserva(
-        usuario: 1, // Por ahora hardcodeado, después vendrá del usuario logueado
-        plaza: widget.plaza,
-        fecha: DateTime.now(),
-        matricula: _matriculaController.text.toUpperCase(),
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+      
+      if (token == null) {
+        throw Exception('No hay token de autenticación');
+      }
+
+      final response = await _reservaService.reservarPlaza(
+        plazaId: widget.plaza.id,
+        matricula: _matriculaController.text,
+        token: token,
       );
 
-      // Añadir la reserva a la lista temporal
-      reservasUsuario.add(nuevaReserva);
-
-      // Actualizar el estado de la plaza
-      setState(() {
-        widget.plaza.estado = EstadosPlaza.reservada;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Plaza P-${widget.plaza.id} reservada con éxito'),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-        ),
-      );
-
-      // Volvemos a la pantalla anterior
-      Navigator.pop(context);
-      Navigator.pop(context);
+      if (response.statusCode == 200) {
+        // Navegar a la pantalla de inicio
+        if (mounted) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            (route) => false,
+          );
+        }
+      } else {
+        throw Exception('Error al realizar la reserva: ${response.body}');
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error al realizar la reserva: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      setState(() {
+        _errorMessage = e.toString();
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -174,9 +183,22 @@ class _ConfirmarReservaScreenState extends State<ConfirmarReservaScreen> {
                 ),
               ),
               const Spacer(),
+              // Mensaje de error
+              if (_errorMessage != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: Text(
+                    _errorMessage!,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 16,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               // Botón de confirmar
               ElevatedButton(
-                onPressed: _confirmarReserva,
+                onPressed: _isLoading ? null : _confirmarReserva,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   foregroundColor: Colors.white,
@@ -186,21 +208,23 @@ class _ConfirmarReservaScreenState extends State<ConfirmarReservaScreen> {
                   ),
                   elevation: 2,
                 ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.check_circle_outline),
-                    SizedBox(width: 8),
-                    Text(
-                      'CONFIRMAR',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1,
+                child: _isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.check_circle_outline),
+                          SizedBox(width: 8),
+                          Text(
+                            'CONFIRMAR',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
               ),
               const SizedBox(height: 20),
             ],

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 import '../models/reserva.dart';
 import 'api_service.dart';
 
@@ -42,6 +43,50 @@ class ReservaService {
       
       if (response.statusCode != 200) {
         throw Exception('Error al cancelar reserva: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error al conectar con el servidor: $e');
+    }
+  }
+
+  Future<http.Response> reservarPlaza({
+    required int plazaId,
+    required String matricula,
+    required String token,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${ApiService.baseUrl}/reservar'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'plaza': plazaId,
+          'matricula': matricula,
+        }),
+      );
+
+      return response;
+    } catch (e) {
+      throw Exception('Error al conectar con el servidor: $e');
+    }
+  }
+
+  Future<List<Reserva>> obtenerMisReservas(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse('${ApiService.baseUrl}/misreservas'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.map((json) => Reserva.fromJson(json)).toList();
+      } else {
+        throw Exception('Error al obtener reservas: ${response.statusCode}');
       }
     } catch (e) {
       throw Exception('Error al conectar con el servidor: $e');

@@ -1,15 +1,15 @@
 package com.parking.backend.dto;
 
 public class ReservaRequest {
-    private int matricula;
+    private String matricula;
     private int plaza;
 
     // Getters y Setters
-    public int getMatricula() {
+    public String getMatricula() {
         return matricula;
     }
 
-    public void setMatricula(int matricula) {
+    public void setMatricula(String matricula) {
         this.matricula = matricula;
     }
 

@@ -36,8 +36,8 @@ public class ReservaService {
     }
 
     //obtener las reservasd de un usuario
-    public List<reserva> obtener_reservas_usuario(int id_usuaio){
-        return reservaRepository.findByUsuarioId(id_usuaio,Sort.by(Sort.Order.desc("fecha")));
+    public List<reserva> obtener_reservas_usuario(int id_usuario){
+        return reservaRepository.findByUsuarioId(id_usuario,Sort.by(Sort.Order.desc("fecha")));
     }
 }
 
