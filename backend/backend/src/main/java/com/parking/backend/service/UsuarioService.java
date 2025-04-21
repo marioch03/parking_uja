@@ -1,6 +1,6 @@
 package com.parking.backend.service;
 
-import com.parking.backend.model.usuario;
+import com.parking.backend.model.Usuario;
 import com.parking.backend.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,26 +19,26 @@ public class UsuarioService {
     private PasswordEncoder passwordEncoder;
 
     // Obtener todos los usuarios
-    public List<usuario> obtenerUsuarios() {
+    public List<Usuario> obtenerUsuarios() {
         return usuarioRepository.findAll();
     }
 
     // Obtener un usuario por su ID
-    public Optional<usuario> obtenerUsuarioPorId(int id) {
+    public Optional<Usuario> obtenerUsuarioPorId(int id) {
         return usuarioRepository.findById(id);
     }
 
     // Obtener un usuario por su nombre de usuario
-    public Optional<usuario> obtenerUsuarioPorUsername(String username) {
+    public Optional<Usuario> obtenerUsuarioPorUsername(String username) {
         return Optional.ofNullable(usuarioRepository.findByUsername(username));
     }
 
     // Autenticar usuario
-    public Optional<usuario> authenticateUser(String username, String password) {
-        Optional<usuario> userOpt = Optional.ofNullable(usuarioRepository.findByUsername(username));
+    public Optional<Usuario> authenticateUser(String username, String password) {
+        Optional<Usuario> userOpt = Optional.ofNullable(usuarioRepository.findByUsername(username));
         
         if (userOpt.isPresent()) {
-            usuario user = userOpt.get();
+            Usuario user = userOpt.get();
             if (passwordEncoder.matches(password, user.getPassword())) {
                 return userOpt;
             }
@@ -50,7 +50,7 @@ public class UsuarioService {
         return passwordEncoder;
     }
 
-    public void guardarUsuario(usuario usuario) {
+    public void guardarUsuario(Usuario usuario) {
         usuarioRepository.save(usuario);
     }
 }

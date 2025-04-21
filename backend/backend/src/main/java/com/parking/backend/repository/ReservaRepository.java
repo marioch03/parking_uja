@@ -1,14 +1,14 @@
 package com.parking.backend.repository;
 
-import com.parking.backend.model.reserva;
+import com.parking.backend.model.Reserva;
 
 import java.util.List;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ReservaRepository extends JpaRepository<reserva, Integer> {
+public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
      // Buscar reservas por usuario
-     List<reserva> findByUsuarioId(Integer usuarioId,Sort sort);
+     List<Reserva> findByUsuarioId(Integer usuarioId,Sort sort);
 }
 

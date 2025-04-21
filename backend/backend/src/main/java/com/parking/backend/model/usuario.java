@@ -13,7 +13,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "usuario")
-public class usuario implements Serializable{
+public class Usuario implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,10 +38,10 @@ public class usuario implements Serializable{
     private boolean rol;
 
     // Constructores
-    public usuario() {
+    public Usuario() {
     }
 
-    public usuario(String username, String mail, String password, boolean rol) {
+    public Usuario(String username, String mail, String password, boolean rol) {
         this.username = username;
         this.mail = mail;
         this.password = password;

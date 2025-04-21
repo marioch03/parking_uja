@@ -1,6 +1,6 @@
 package com.parking.backend.service;
 
-import com.parking.backend.model.estado;
+import com.parking.backend.model.Estado;
 import com.parking.backend.repository.EstadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,17 +15,17 @@ public class EstadoService {
     private EstadoRepository estadoRepository;
 
     // Obtener todos los estados
-    public List<estado> obtenerEstados() {
+    public List<Estado> obtenerEstados() {
         return estadoRepository.findAll();
     }
 
     // Obtener un estado por su ID
-    public Optional<estado> obtenerEstadoPorId(int id) {
+    public Optional<Estado> obtenerEstadoPorId(int id) {
         return estadoRepository.findById(id);
     }
 
-    // Guardar un nuevo estado
-    public estado guardarEstado(estado estado) {
+    // Guardar un nuevo Estado
+    public Estado guardarEstado(Estado estado) {
         return estadoRepository.save(estado);
     }
 

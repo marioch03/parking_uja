@@ -9,7 +9,7 @@ import jakarta.persistence.Column;
 
 @Entity
 @Table(name = "estado")
-public class estado {
+public class Estado {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,10 +19,10 @@ public class estado {
     private String nombre;
 
     // Constructores
-    public estado() {
+    public Estado() {
     }
 
-    public estado(String nombre) {
+    public Estado(String nombre) {
         this.nombre = nombre;
     }
 

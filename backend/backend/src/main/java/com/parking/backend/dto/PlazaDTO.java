@@ -1,18 +1,18 @@
 package com.parking.backend.dto;
 
-import com.parking.backend.model.estado;
+import com.parking.backend.model.Estado;
 
 public class PlazaDTO {
     private int id;
     private int numero;
     private int planta;
-    private estado estado;
+    private Estado estado;
 
     // Constructores
     public PlazaDTO() {
     }
 
-    public PlazaDTO(int id, int numero, int planta, estado estado) {
+    public PlazaDTO(int id, int numero, int planta, Estado estado) {
         this.id = id;
         this.numero = numero;
         this.planta = planta;
@@ -44,11 +44,11 @@ public class PlazaDTO {
         this.planta = planta;
     }
 
-    public estado getEstado() {
+    public Estado getEstado() {
         return estado;
     }
 
-    public void setEstado(estado estado) {
+    public void setEstado(Estado estado) {
         this.estado = estado;
     }
 } 

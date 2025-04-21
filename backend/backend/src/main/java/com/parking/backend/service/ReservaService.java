@@ -1,6 +1,6 @@
 package com.parking.backend.service;
 
-import com.parking.backend.model.reserva;
+import com.parking.backend.model.Reserva;
 import com.parking.backend.repository.ReservaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -16,17 +16,17 @@ public class ReservaService {
     private ReservaRepository reservaRepository;
 
     // Obtener todas las reservas
-    public List<reserva> obtenerReservas() {
+    public List<Reserva> obtenerReservas() {
         return reservaRepository.findAll();
     }
 
     // Obtener una reserva por su ID
-    public Optional<reserva> obtenerReservaPorId(int id) {
+    public Optional<Reserva> obtenerReservaPorId(int id) {
         return reservaRepository.findById(id);
     }
 
     // Guardar una nueva reserva
-    public reserva guardarReserva(reserva reserva) {
+    public Reserva guardarReserva(Reserva reserva) {
         return reservaRepository.save(reserva);
     }
 
@@ -36,7 +36,7 @@ public class ReservaService {
     }
 
     //obtener las reservasd de un usuario
-    public List<reserva> obtener_reservas_usuario(int id_usuario){
+    public List<Reserva> obtener_reservas_usuario(int id_usuario){
         return reservaRepository.findByUsuarioId(id_usuario,Sort.by(Sort.Order.desc("fecha")));
     }
 }

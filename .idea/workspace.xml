@@ -4,17 +4,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d1dd0f8c-e37d-4db6-84d5-d282498cc45c" name="Changes" comment="Acceso a las plazas disponibles implementado correctamente">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/src/main/java/com/parking/backend/BackendController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/src/main/java/com/parking/backend/BackendController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/src/main/java/com/parking/backend/dto/ReservaRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/src/main/java/com/parking/backend/dto/ReservaRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/src/main/java/com/parking/backend/model/reserva.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/src/main/java/com/parking/backend/model/reserva.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/src/main/java/com/parking/backend/service/ReservaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/src/main/java/com/parking/backend/service/ReservaService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/lib/models/reserva.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/models/reserva.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/lib/screens/confirmar_reserva_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/screens/confirmar_reserva_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/lib/screens/mis_reservas_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/screens/mis_reservas_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/lib/services/reserva_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/services/reserva_service.dart" afterDir="false" />
-    </list>
+    <list default="true" id="d1dd0f8c-e37d-4db6-84d5-d282498cc45c" name="Changes" comment="Implementado hacer reservas y ver tus reservas con backend" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -199,7 +189,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744534039520</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Implementado hacer reservas y ver tus reservas con backend">
+      <option name="closed" value="true" />
+      <created>1744537014989</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1744537014989</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -226,6 +224,7 @@
     <MESSAGE value="Login con backend funcionando" />
     <MESSAGE value="Continuación del commit anterior" />
     <MESSAGE value="Acceso a las plazas disponibles implementado correctamente" />
-    <option name="LAST_COMMIT_MESSAGE" value="Acceso a las plazas disponibles implementado correctamente" />
+    <MESSAGE value="Implementado hacer reservas y ver tus reservas con backend" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implementado hacer reservas y ver tus reservas con backend" />
   </component>
 </project>

@@ -1,6 +1,7 @@
 package com.parking.backend.service;
 
-import com.parking.backend.model.plaza;
+import com.parking.backend.model.Estado;
+import com.parking.backend.model.Plaza;
 import com.parking.backend.repository.PlazaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,23 +17,25 @@ public class PlazaService {
     private PlazaRepository plazaRepository;
 
     // Obtener todas las plazas
-    public List<plaza> obtenerPlazas() {
+    public List<Plaza> obtenerPlazas() {
         return plazaRepository.findAll();
     }
 
     // Obtener una plaza por su ID
-    public Optional<plaza> obtenerPlazaPorId(int id) {
+    public Optional<Plaza> obtenerPlazaPorId(int id) {
         return plazaRepository.findById(id);
     }
 
 
     // Actualizar una plaza
     @Transactional
-    public plaza actualizarPlaza(plaza plaza) {
-        if (!plazaRepository.existsById(plaza.getId())) {
-            throw new RuntimeException("Plaza no encontrada");
+    public Plaza actualizarPlaza(int id, Estado estado) {
+        Optional<Plaza> plaza = plazaRepository.findById(id);
+        if (plaza.isPresent()) {
+            plaza.get().setEstado(estado);
+            return plazaRepository.save(plaza.get());
         }
-        return plazaRepository.save(plaza);
+        return null;
     }
 
     // Eliminar una plaza

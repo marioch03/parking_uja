@@ -10,7 +10,7 @@ import jakarta.persistence.JoinColumn;
 
 @Entity
 @Table(name = "plaza")
-public class plaza {
+public class Plaza {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,10 +18,10 @@ public class plaza {
 
     @ManyToOne
     @JoinColumn(name = "estado")
-    private estado estado;
+    private Estado estado;
 
     // Constructores
-    public plaza() {
+    public Plaza() {
     }
 
     // Getters y Setters
@@ -33,11 +33,11 @@ public class plaza {
         this.id = id;
     }
 
-    public estado getEstado() {
+    public Estado getEstado() {
         return estado;
     }
 
-    public void setEstado(estado estado) {
+    public void setEstado(Estado estado) {
         this.estado = estado;
     }
 }

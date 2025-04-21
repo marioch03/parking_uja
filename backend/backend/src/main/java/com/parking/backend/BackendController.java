@@ -6,9 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-import com.parking.backend.model.usuario;
-import com.parking.backend.model.plaza;
-import com.parking.backend.model.reserva;
+import com.parking.backend.model.Usuario;
+import com.parking.backend.model.Plaza;
+import com.parking.backend.model.Reserva;
 import com.parking.backend.service.UsuarioService;
 import com.parking.backend.service.PlazaService;
 import com.parking.backend.service.ReservaService;
@@ -49,7 +49,7 @@ public class BackendController {
     // Endpoints de autenticación
     @PostMapping("/login")
     public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
-        Optional<usuario> user = usuarioService.authenticateUser(loginRequest.getUsername(), loginRequest.getPassword());
+        Optional<Usuario> user = usuarioService.authenticateUser(loginRequest.getUsername(), loginRequest.getPassword());
         if (user.isPresent()) {
             // Crear un objeto con la información necesaria para el frontend
             Map<String, Object> userData = new HashMap<>();
@@ -80,14 +80,14 @@ public class BackendController {
 
     //metodo para obtener los usuarios
     @GetMapping("/usuarios")
-    public ResponseEntity<List<usuario>> getUsers() {
+    public ResponseEntity<List<Usuario>> getUsers() {
         return ResponseEntity.ok(usuarioService.obtenerUsuarios());
     }
     
 
     //metodo para obtener el estado de las plazas
     @GetMapping("/plazas")
-    public ResponseEntity<List<plaza>> getPlazas() {
+    public ResponseEntity<List<Plaza>> getPlazas() {
         return ResponseEntity.ok(plazaService.obtenerPlazas());
     }
 
@@ -100,14 +100,14 @@ public class BackendController {
 
         // Obtener el usuario del token
         String username = tokenProvider.getUsernameFromJWT(token.substring(7));
-        Optional<usuario> user = usuarioService.obtenerUsuarioPorUsername(username);
+        Optional<Usuario> user = usuarioService.obtenerUsuarioPorUsername(username);
         
         if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario no encontrado");
         }
 
         //compruebo que la plaza existe y esta libre
-        Optional<plaza> plaza_a_reservar = plazaService.obtenerPlazaPorId(plaza);
+        Optional<Plaza> plaza_a_reservar = plazaService.obtenerPlazaPorId(plaza);
         if(plaza_a_reservar.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Plaza no encontrada");
         }
@@ -116,7 +116,7 @@ public class BackendController {
         }
 
         //creo la reserva
-        reserva nueva_Reserva = new reserva(user.get(), plaza_a_reservar.get(), LocalDateTime.now(), matricula);
+        Reserva nueva_Reserva = new Reserva(user.get(), plaza_a_reservar.get(), LocalDateTime.now(), matricula);
 
         //la introduzco en la base de datos
         reservaService.guardarReserva(nueva_Reserva);
@@ -126,15 +126,15 @@ public class BackendController {
     }
 
     @GetMapping("/misreservas")
-    public ResponseEntity<List<reserva>> misreservas(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<Reserva>> misreservas(@RequestHeader("Authorization") String token) {
         String username = tokenProvider.getUsernameFromJWT(token.substring(7));
-        Optional<usuario> user = usuarioService.obtenerUsuarioPorUsername(username);
+        Optional<Usuario> user = usuarioService.obtenerUsuarioPorUsername(username);
         
         if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        List<reserva> lista_reservas = reservaService.obtener_reservas_usuario(user.get().getId());
+        List<Reserva> lista_reservas = reservaService.obtener_reservas_usuario(user.get().getId());
         return ResponseEntity.ok(lista_reservas);
     }
 

@@ -1,11 +1,16 @@
 package com.parking.backend.service;
 
+import java.util.Optional;
 import org.eclipse.paho.client.mqttv3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jakarta.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import com.parking.backend.model.Estado;
 
 @Component
 public class MqttService implements MqttCallback {
@@ -18,6 +23,12 @@ public class MqttService implements MqttCallback {
     private String clientId;
 
     private MqttClient mqttClient;
+    
+    @Autowired
+    private PlazaService plazaService;
+
+    @Autowired
+    private EstadoService estadoService;
 
     public void connect() {
         try {
@@ -65,18 +76,34 @@ public class MqttService implements MqttCallback {
         switch (topic) {
             case "parking/plaza1":
                 logger.info("Procesando mensaje de la plaza 1: {}", payload);
+                int idEstado1 = Integer.parseInt(payload);
+                Optional<Estado> estado1 = estadoService.obtenerEstadoPorId(idEstado1);
+                plazaService.actualizarPlaza(1, estado1.get());
                 break;
             case "parking/plaza2":
                 logger.info("Procesando mensaje de la plaza 2: {}", payload);
+                int idEstado2 = Integer.parseInt(payload);
+                Optional<Estado> estado2 = estadoService.obtenerEstadoPorId(idEstado2);
+                plazaService.actualizarPlaza(2, estado2.get());
+
                 break;
             case "parking/plaza3":
                 logger.info("Procesando mensaje de la plaza 3: {}", payload);
+                int idEstado3 = Integer.parseInt(payload);
+                Optional<Estado> estado3 = estadoService.obtenerEstadoPorId(idEstado3);
+                plazaService.actualizarPlaza(3, estado3.get());
                 break;
             case "parking/plaza4":
                 logger.info("Procesando mensaje de la plaza 4: {}", payload);
+                int idEstado4 = Integer.parseInt(payload);
+                Optional<Estado> estado4 = estadoService.obtenerEstadoPorId(idEstado4);
+                plazaService.actualizarPlaza(4, estado4.get());
                 break;
             case "parking/plaza5":
                 logger.info("Procesando mensaje de la plaza 5: {}", payload);
+                int idEstado5 = Integer.parseInt(payload);
+                Optional<Estado> estado5 = estadoService.obtenerEstadoPorId(idEstado5);
+                plazaService.actualizarPlaza(5, estado5.get());
                 break;
             default:
                 logger.warn("Mensaje recibido en un topic no esperado: {}", topic);

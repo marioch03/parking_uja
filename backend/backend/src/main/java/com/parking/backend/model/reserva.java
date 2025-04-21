@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "reserva")
-public class reserva {
+public class Reserva {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,11 +20,11 @@ public class reserva {
 
     @ManyToOne
     @JoinColumn(name = "usuario")
-    private usuario usuario;
+    private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "plaza")
-    private plaza plaza;
+    private Plaza plaza;
 
     @Column(name = "fecha")
     private LocalDateTime fecha;
@@ -34,10 +34,10 @@ public class reserva {
 
 
     // Constructores
-    public reserva() {
+    public Reserva() {
     }
 
-    public reserva(usuario usuario, plaza plaza,LocalDateTime fecha,String matricula) {
+    public Reserva(Usuario usuario, Plaza plaza,LocalDateTime fecha,String matricula) {
         this.fecha=fecha;
         this.matricula=matricula;
         this.usuario=usuario;
@@ -61,19 +61,19 @@ public class reserva {
         this.fecha = fecha;
     }
 
-    public usuario getUsuario() {
+    public Usuario getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(usuario usuario) {
+    public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
 
-    public plaza getPlaza() {
+    public Plaza getPlaza() {
         return plaza;
     }
 
-    public void setPlaza(plaza plaza) {
+    public void setPlaza(Plaza plaza) {
         this.plaza = plaza;
     }
 
