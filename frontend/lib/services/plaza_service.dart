@@ -6,10 +6,15 @@ class PlazaService {
   Future<List<Plaza>> getPlazas() async {
     try {
       final response = await ApiService.get('/plazas');
-      
+
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-        return data.map((json) => Plaza.fromJson(json)).toList();
+        final List<Plaza> plazas = data.map((json) => Plaza.fromJson(json)).toList();
+
+        // Ordenar la lista de plazas por su id antes de retornarla
+        plazas.sort((a, b) => a.id.compareTo(b.id));
+
+        return plazas;
       } else {
         throw Exception('Error al obtener plazas: ${response.statusCode}');
       }

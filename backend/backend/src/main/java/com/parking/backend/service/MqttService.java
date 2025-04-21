@@ -85,7 +85,6 @@ public class MqttService implements MqttCallback {
                 int idEstado2 = Integer.parseInt(payload);
                 Optional<Estado> estado2 = estadoService.obtenerEstadoPorId(idEstado2);
                 plazaService.actualizarPlaza(2, estado2.get());
-
                 break;
             case "parking/plaza3":
                 logger.info("Procesando mensaje de la plaza 3: {}", payload);

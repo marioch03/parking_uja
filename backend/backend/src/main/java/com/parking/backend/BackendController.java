@@ -7,9 +7,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import com.parking.backend.model.Usuario;
+import com.parking.backend.model.Estado;
 import com.parking.backend.model.Plaza;
 import com.parking.backend.model.Reserva;
 import com.parking.backend.service.UsuarioService;
+import com.parking.backend.service.EstadoService;
 import com.parking.backend.service.PlazaService;
 import com.parking.backend.service.ReservaService;
 import com.parking.backend.dto.LoginRequest;
@@ -39,6 +41,9 @@ public class BackendController {
 
     @Autowired
     private PlazaService plazaService;
+
+    @Autowired
+    private EstadoService estadoService;
 
     @Autowired
     private ReservaService reservaService;
@@ -120,6 +125,8 @@ public class BackendController {
 
         //la introduzco en la base de datos
         reservaService.guardarReserva(nueva_Reserva);
+        Optional<Estado> estadoReservado = estadoService.obtenerEstadoPorId(3);
+        plazaService.actualizarPlaza(plaza, estadoReservado.get());
 
         //devuelvo confirmacion
         return ResponseEntity.ok("Reserva recibida: matricula=" + matricula + ", plaza=" + plaza);

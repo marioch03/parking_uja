@@ -150,10 +150,10 @@ class _ReservarPlazaScreenState extends State<ReservarPlazaScreen> {
                                       'Estado: ${plaza.estado.nombre}',
                                       style: TextStyle(
                                         fontSize: 14,
-                                        color: plaza.estado == EstadosPlaza.ocupada
+                                        color: plaza.estado.id == EstadosPlaza.ocupada.id
                                             ? Colors.red
-                                            : plaza.estado == EstadosPlaza.reservada
-                                                ? Colors.orange
+                                            : plaza.estado.id == EstadosPlaza.reservada.id
+                                                ? Colors.blueAccent
                                                 : Colors.green,
                                       ),
                                     ),
