@@ -23,7 +23,7 @@ public class MqttService implements MqttCallback {
     private String clientId;
 
     private MqttClient mqttClient;
-    
+
     @Autowired
     private PlazaService plazaService;
 
@@ -43,9 +43,13 @@ public class MqttService implements MqttCallback {
             logger.info("Conectado al broker MQTT");
 
             // Suscribirse a los topics al iniciar
-            String[] topics = { "parking/plaza1", "parking/plaza2", "parking/plaza3", "parking/plaza4",
-                    "parking/plaza5" };
-            int[] qos = { 0, 0, 0, 0, 0 };
+            String[] topics = {
+                    "parking/Plaza_1", "parking/Plaza_2", "parking/Plaza_3",
+                    "parking/Matricula_1", "parking/Matricula_2", "parking/Matricula_3",
+                    "parking/Led_1", "parking/Led_2", "parking/Led_3"
+            };
+            // Estableceer la calidad de servicio
+            int[] qos = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             mqttClient.subscribe(topics, qos);
             logger.info("Suscrito a los topics: {}", String.join(", ", topics));
 
@@ -74,35 +78,32 @@ public class MqttService implements MqttCallback {
 
     private void processMessage(String topic, String payload) {
         switch (topic) {
-            case "parking/plaza1":
-                logger.info("Procesando mensaje de la plaza 1: {}", payload);
-                int idEstado1 = Integer.parseInt(payload);
-                Optional<Estado> estado1 = estadoService.obtenerEstadoPorId(idEstado1);
-                plazaService.actualizarPlaza(1, estado1.get());
+            case "parking/Plaza_1":
+                procesarTopicPlaza(1, payload);
                 break;
-            case "parking/plaza2":
-                logger.info("Procesando mensaje de la plaza 2: {}", payload);
-                int idEstado2 = Integer.parseInt(payload);
-                Optional<Estado> estado2 = estadoService.obtenerEstadoPorId(idEstado2);
-                plazaService.actualizarPlaza(2, estado2.get());
+            case "parking/Plaza_2":
+                procesarTopicPlaza(2, payload);
                 break;
-            case "parking/plaza3":
-                logger.info("Procesando mensaje de la plaza 3: {}", payload);
-                int idEstado3 = Integer.parseInt(payload);
-                Optional<Estado> estado3 = estadoService.obtenerEstadoPorId(idEstado3);
-                plazaService.actualizarPlaza(3, estado3.get());
+            case "parking/Plaza_3":
+                procesarTopicPlaza(3, payload);
                 break;
-            case "parking/plaza4":
-                logger.info("Procesando mensaje de la plaza 4: {}", payload);
-                int idEstado4 = Integer.parseInt(payload);
-                Optional<Estado> estado4 = estadoService.obtenerEstadoPorId(idEstado4);
-                plazaService.actualizarPlaza(4, estado4.get());
+            case "parking/Matricula_1":
+                procesarTopicMatricula(1, payload);
                 break;
-            case "parking/plaza5":
-                logger.info("Procesando mensaje de la plaza 5: {}", payload);
-                int idEstado5 = Integer.parseInt(payload);
-                Optional<Estado> estado5 = estadoService.obtenerEstadoPorId(idEstado5);
-                plazaService.actualizarPlaza(5, estado5.get());
+            case "parking/Matricula_2":
+                procesarTopicMatricula(2, payload);
+                break;
+            case "parking/Matricula_3":
+                procesarTopicMatricula(3, payload);
+                break;
+            case "parking/Led_1":
+                procesarTopicLed(1, payload);
+                break;
+            case "parking/Led_2":
+                procesarTopicLed(2, payload);
+                break;
+            case "parking/Led_3":
+                procesarTopicLed(3, payload);
                 break;
             default:
                 logger.warn("Mensaje recibido en un topic no esperado: {}", topic);
@@ -130,6 +131,23 @@ public class MqttService implements MqttCallback {
         } catch (MqttException e) {
             logger.error("Error al desconectar del broker MQTT: {}", e.getMessage(), e);
         }
+    }
+
+    public void procesarTopicPlaza(int plaza, String payload) {
+        logger.info("Procesando mensaje de la plaza ", payload);
+        int idEstado = Integer.parseInt(payload);
+        Optional<Estado> estado = estadoService.obtenerEstadoPorId(idEstado);
+        plazaService.actualizarPlaza(plaza, estado.get());
+    }
+
+    public void procesarTopicMatricula(int plaza, String payload) {
+        logger.info("Procesando matrícula de la plaza ", plaza, ": ", payload);
+        // Pensar la lógica
+    }
+
+    public void procesarTopicLed(int plaza, String payload) {
+        logger.info("Procesando LED de la plaza ", plaza, ": ", payload);
+        // Pensar lógica
     }
 
     @PostConstruct
