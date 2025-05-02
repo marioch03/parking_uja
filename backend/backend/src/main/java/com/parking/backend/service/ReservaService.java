@@ -59,6 +59,24 @@ public class ReservaService {
         return reservaRepository.findByUsuarioId(id_usuario,Sort.by(Sort.Order.desc("fecha")));
     }
 
+    public List<Reserva> obtenerReservasPlazaFechaDesc(int idPlaza){
+        return reservaRepository.findByPlazaIdOrderByFechaDesc(idPlaza);
+    }
+
+    public boolean comprobarPlazaReservada(int idPlaza, String matricula){
+        List<Reserva> reservasPlaza = obtenerReservasPlazaFechaDesc(idPlaza);
+        System.out.println("RESERVAS: "+reservasPlaza);
+        if(reservasPlaza.isEmpty()){
+            return false;
+        }
+        System.out.println("MATRICULA BBDD: "+reservasPlaza.get(0).getMatricula());
+        System.out.println("MATRICULA: : "+matricula);
+        if(reservasPlaza.get(0).getMatricula().equals(matricula)){
+            return true;
+        }
+        return false;
+    }
+
     @Scheduled(fixedRate = 300000) // Ejecutar cada 5 min (300000 ms)
     public void verificarYExpirarReservas() {
         LocalDateTime ahora = LocalDateTime.now();

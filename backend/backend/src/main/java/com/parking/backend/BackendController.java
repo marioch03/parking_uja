@@ -12,6 +12,7 @@ import com.parking.backend.model.Plaza;
 import com.parking.backend.model.Reserva;
 import com.parking.backend.service.UsuarioService;
 import com.parking.backend.service.EstadoService;
+import com.parking.backend.service.MqttService;
 import com.parking.backend.service.PlazaService;
 import com.parking.backend.service.ReservaService;
 import com.parking.backend.dto.LoginRequest;
@@ -28,9 +29,6 @@ import java.util.Map;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
-
-
 
 @RestController
 @RequestMapping("/api")
@@ -50,6 +48,9 @@ public class BackendController {
 
     @Autowired
     private JwtTokenProvider tokenProvider;
+
+    @Autowired
+    private MqttService mqttService;
 
     // Endpoints de autenticación
     @PostMapping("/login")
@@ -127,7 +128,8 @@ public class BackendController {
         reservaService.guardarReserva(nueva_Reserva);
         Optional<Estado> estadoReservado = estadoService.obtenerEstadoPorId(3);
         plazaService.actualizarPlaza(plaza, estadoReservado.get());
-
+        String topicLed = "Led_"+plaza_a_reservar.get().getId();
+        mqttService.publishMessage(topicLed, String.valueOf(3));
         //devuelvo confirmacion
         return ResponseEntity.ok("Reserva recibida: matricula=" + matricula + ", plaza=" + plaza);
     }
