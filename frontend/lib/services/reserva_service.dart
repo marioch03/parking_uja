@@ -6,7 +6,7 @@ import 'api_service.dart';
 class ReservaService {
   Future<List<Reserva>> getReservasUsuario() async {
     try {
-      final response = await ApiService.get('/reservas/usuario');
+      final response = await ApiService.get('/misreservas');
       
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
@@ -39,7 +39,7 @@ class ReservaService {
 
   Future<void> cancelarReserva(String reservaId) async {
     try {
-      final response = await ApiService.delete('/reservas/$reservaId');
+      final response = await ApiService.delete('/cancelarreserva/$reservaId');
       
       if (response.statusCode != 200) {
         throw Exception('Error al cancelar reserva: ${response.statusCode}');
@@ -92,4 +92,6 @@ class ReservaService {
       throw Exception('Error al conectar con el servidor: $e');
     }
   }
+
+
 }

@@ -5,11 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d1dd0f8c-e37d-4db6-84d5-d282498cc45c" name="Changes" comment="Implementado hacer reservas y ver tus reservas con backend">
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/src/main/java/com/parking/backend/BackendApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/src/main/java/com/parking/backend/BackendApplication.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/backend/src/main/java/com/parking/backend/BackendController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/src/main/java/com/parking/backend/BackendController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/src/main/java/com/parking/backend/service/MqttService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/src/main/java/com/parking/backend/service/MqttService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/src/main/java/com/parking/backend/service/ReservaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/src/main/java/com/parking/backend/service/ReservaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/lib/screens/confirmar_reserva_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/screens/confirmar_reserva_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/lib/screens/mis_reservas_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/screens/mis_reservas_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/lib/screens/reservar_plaza_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/screens/reservar_plaza_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/lib/services/plaza_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/services/plaza_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/lib/services/reserva_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/services/reserva_service.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

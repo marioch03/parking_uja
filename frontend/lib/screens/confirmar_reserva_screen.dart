@@ -30,7 +30,12 @@ class _ConfirmarReservaScreenState extends State<ConfirmarReservaScreen> {
       });
       return;
     }
-
+    if (_matriculaController.text.length != 3) {
+      setState(() {
+        _errorMessage = 'La matrícula debe contener exactamente 3 letras';
+      });
+      return;
+    }
     setState(() {
       _isLoading = true;
       _errorMessage = null;

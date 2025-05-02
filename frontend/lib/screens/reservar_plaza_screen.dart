@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:parking_uja/models/plaza.dart';
 import 'package:parking_uja/services/plaza_service.dart';
 import 'package:parking_uja/screens/confirmar_reserva_screen.dart';
+import 'package:parking_uja/services/reserva_service.dart';
 
 import '../models/estado_plaza.dart';
 
@@ -14,8 +15,10 @@ class ReservarPlazaScreen extends StatefulWidget {
 
 class _ReservarPlazaScreenState extends State<ReservarPlazaScreen> {
   final PlazaService _plazaService = PlazaService();
+  final ReservaService _reservaService = ReservaService();
   List<Plaza> plazas = [];
   bool _isLoading = true;
+  bool _plazasReservadas = false;
   String? _error;
 
   @override
@@ -32,9 +35,12 @@ class _ReservarPlazaScreenState extends State<ReservarPlazaScreen> {
       });
 
       final plazasObtenidas = await _plazaService.getPlazas();
-      
+      final reservasUsuario = await _reservaService.getReservasUsuario();
       if (mounted) {
         setState(() {
+          if(reservasUsuario.isNotEmpty){
+            _plazasReservadas = true;
+          }
           plazas = plazasObtenidas;
           _isLoading = false;
         });
@@ -161,7 +167,7 @@ class _ReservarPlazaScreenState extends State<ReservarPlazaScreen> {
                                 ),
                               ),
                               // Botón de reserva
-                              if (plaza.estado.isLibre)
+                              if (plaza.estado.isLibre && !_plazasReservadas)
                                 ElevatedButton(
                                   onPressed: () => _reservarPlaza(plaza),
                                   style: ElevatedButton.styleFrom(

@@ -63,6 +63,7 @@ class _MisReservasScreenState extends State<MisReservasScreen> {
                 // TODO: Implementar cancelación de reserva en el backend
                 setState(() {
                   _reservas.remove(reserva);
+                  _reservaService.cancelarReserva(reserva.id.toString());
                 });
 
                 ScaffoldMessenger.of(context).showSnackBar(
