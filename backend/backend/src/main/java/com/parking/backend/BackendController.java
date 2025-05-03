@@ -149,11 +149,17 @@ public class BackendController {
 
     @DeleteMapping("/cancelarreserva/{id}")
     public ResponseEntity<ApiResponse> cancelarReserva(@PathVariable int id, @RequestHeader("Authorization") String token) {
-        if (reservaService.eliminarReserva(id)) {
-            return ResponseEntity.ok(new ApiResponse(true, "Reserva eliminada correctamente"));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse(false, "No se encontró la reserva con ID: " + id));
+        Optional<Reserva> reserva = reservaService.obtenerReservaPorId(id);
+        if(reserva.isPresent()){
+            Plaza plazaReserva = reserva.get().getPlaza();
+            if (reservaService.eliminarReserva(id)) {
+                String topic = "Led_"+plazaReserva.getId();
+                mqttService.publishMessage(topic, "1");
+                return ResponseEntity.ok(new ApiResponse(true, "Reserva eliminada correctamente"));
+            }
         }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ApiResponse(false, "No se encontró la reserva con ID: " + id));
+    
     }
 }

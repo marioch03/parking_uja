@@ -77,6 +77,7 @@ public class ReservaService {
         return false;
     }
 
+    /**
     @Scheduled(fixedRate = 300000) // Ejecutar cada 5 min (300000 ms)
     public void verificarYExpirarReservas() {
         LocalDateTime ahora = LocalDateTime.now();
@@ -85,8 +86,8 @@ public class ReservaService {
         for (Reserva reserva : reservas) {
             LocalDateTime fechaReserva = reserva.getFecha();
             long segundosDiff = fechaReserva.until(ahora, ChronoUnit.SECONDS);
-            //Si la reserva se hizo hace 1 hora, se elimina
-            if(segundosDiff > 3600) {
+            //Si la reserva se hizo hace 1 Dia , se elimina
+            if(segundosDiff > 86400) {
                 reservaRepository.delete(reserva);
                 Plaza plaza = reserva.getPlaza();
                 Optional<Estado> estadoLibre = estadoService.obtenerEstadoPorId(1); //Estado LIBRE
@@ -94,5 +95,7 @@ public class ReservaService {
             }
         }
     }
+    */
+
 }
 

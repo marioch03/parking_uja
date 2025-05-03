@@ -5,6 +5,10 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jakarta.annotation.PostConstruct;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import jakarta.annotation.PreDestroy;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,13 +38,17 @@ public class MqttService implements MqttCallback {
     @Autowired
     private EstadoService estadoService;
 
+    private final ExecutorService executorService = Executors.newFixedThreadPool(3);
+
     public void connect() {
         try {
             mqttClient = new MqttClient(brokerUrl, clientId);
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setCleanSession(true);
             connOpts.setKeepAliveInterval(600);
-            mqttClient.setCallback(this); // Establecer el callback para recibir mensajes
+            connOpts.setAutomaticReconnect(true); // Habilitar reconexión automática
+            connOpts.setMaxReconnectDelay(5000); // Máximo 5 segundos entre intentos de reconexión
+            mqttClient.setCallback(this);
 
             logger.info("Conectando al broker MQTT: {}", brokerUrl);
             mqttClient.connect(connOpts);
@@ -52,7 +60,6 @@ public class MqttService implements MqttCallback {
                     "parking/Matricula_1", "parking/Matricula_2", "parking/Matricula_3",
                     "parking/Led_1", "parking/Led_2", "parking/Led_3"
             };
-            // Estableceer la calidad de servicio
             int[] qos = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             mqttClient.subscribe(topics, qos);
             logger.info("Suscrito a los topics: {}", String.join(", ", topics));
@@ -65,14 +72,32 @@ public class MqttService implements MqttCallback {
     @Override
     public void connectionLost(Throwable cause) {
         logger.warn("Conexión perdida con el broker MQTT", cause);
-        // Aquí podrías intentar reconectar automáticamente
+        // Intentar reconectar automáticamente
+        try {
+            Thread.sleep(5000); // Esperar 5 segundos antes de intentar reconectar
+            connect();
+        } catch (InterruptedException e) {
+            logger.error("Error durante la reconexión: {}", e.getMessage(), e);
+        }
     }
 
     @Override
     public void messageArrived(String topic, MqttMessage message) {
-        String payload = new String(message.getPayload());
-        logger.info("Mensaje recibido en el topic '{}': {}", topic, payload);
-        processMessage(topic, payload);
+        try {
+            String payload = new String(message.getPayload());
+            logger.info("Mensaje recibido en el topic '{}': {}", topic, payload);
+            
+            // Procesar el mensaje de forma asíncrona
+            executorService.submit(() -> {
+                try {
+                    processMessage(topic, payload);
+                } catch (Exception e) {
+                    logger.error("Error al procesar mensaje del topic '{}': {}", topic, e.getMessage(), e);
+                }
+            });
+        } catch (Exception e) {
+            logger.error("Error al procesar mensaje del topic '{}': {}", topic, e.getMessage(), e);
+        }
     }
 
     @Override
@@ -81,37 +106,41 @@ public class MqttService implements MqttCallback {
     }
 
     private void processMessage(String topic, String payload) {
-        switch (topic) {
-            case "parking/Plaza_1":
-                procesarTopicPlaza(1, payload);
-                break;
-            case "parking/Plaza_2":
-                procesarTopicPlaza(2, payload);
-                break;
-            case "parking/Plaza_3":
-                procesarTopicPlaza(3, payload);
-                break;
-            case "parking/Matricula_1":
-                procesarTopicMatricula(1, payload);
-                break;
-            case "parking/Matricula_2":
-                procesarTopicMatricula(2, payload);
-                break;
-            case "parking/Matricula_3":
-                procesarTopicMatricula(3, payload);
-                break;
-            case "parking/Led_1":
-                logger.warn("Led 1: ", payload);
-                break;
-            case "parking/Led_2":
-                logger.warn("Led 2: ", payload);
-                break;
-            case "parking/Led_3":
-                logger.warn("Led 3: ", payload);
-                break;
-            default:
-                logger.warn("Mensaje recibido en un topic no esperado: {}", topic);
-                break;
+        try {
+            switch (topic) {
+                case "parking/Plaza_1":
+                    procesarTopicPlaza(1, payload);
+                    break;
+                case "parking/Plaza_2":
+                    procesarTopicPlaza(2, payload);
+                    break;
+                case "parking/Plaza_3":
+                    procesarTopicPlaza(3, payload);
+                    break;
+                case "parking/Matricula_1":
+                    procesarTopicMatricula(1, payload);
+                    break;
+                case "parking/Matricula_2":
+                    procesarTopicMatricula(2, payload);
+                    break;
+                case "parking/Matricula_3":
+                    procesarTopicMatricula(3, payload);
+                    break;
+                case "parking/Led_1":
+                    logger.warn("Led 1: {}", String.valueOf(payload));
+                    break;
+                case "parking/Led_2":
+                    logger.warn("Led 2: {}", String.valueOf(payload));
+                    break;
+                case "parking/Led_3":
+                    logger.warn("Led 3: {}", String.valueOf(payload));
+                    break;
+                default:
+                    logger.warn("Mensaje recibido en un topic no esperado: {}", topic);
+                    break;
+            }
+        } catch (Exception e) {
+            logger.error("Error al procesar mensaje del topic '{}': {}", topic, e.getMessage(), e);
         }
     }
 
@@ -189,5 +218,21 @@ public class MqttService implements MqttCallback {
     @PostConstruct
     public void init() {
         connect();
+    }
+
+    @PreDestroy
+    public void cleanup() {
+        try {
+            if (executorService != null) {
+                executorService.shutdown();
+                if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+                    executorService.shutdownNow();
+                }
+            }
+            disconnect();
+        } catch (InterruptedException e) {
+            logger.error("Error durante la limpieza: {}", e.getMessage(), e);
+            Thread.currentThread().interrupt();
+        }
     }
 }
