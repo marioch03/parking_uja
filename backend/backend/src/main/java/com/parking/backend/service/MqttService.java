@@ -9,7 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import jakarta.annotation.PreDestroy;
-
+import java.util.Stack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -37,6 +37,10 @@ public class MqttService implements MqttCallback {
 
     @Autowired
     private EstadoService estadoService;
+
+    private final Stack<Estado> historialPlaza1 = new Stack<>();
+    private final Stack<Estado> historialPlaza2 = new Stack<>();
+    private final Stack<Estado> historialPlaza3 = new Stack<>();
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(3);
 
@@ -86,7 +90,7 @@ public class MqttService implements MqttCallback {
         try {
             String payload = new String(message.getPayload());
             logger.info("Mensaje recibido en el topic '{}': {}", topic, payload);
-            
+
             // Procesar el mensaje de forma asíncrona
             executorService.submit(() -> {
                 try {
@@ -167,49 +171,72 @@ public class MqttService implements MqttCallback {
     }
 
     public void procesarTopicPlaza(int plaza, String payload) {
-        System.out.println("Procesando mensaje de la plaza: "+plaza);
+        System.out.println("Procesando mensaje de la plaza: " + plaza);
         int idEstado = Integer.parseInt(payload);
-        // Solo me interesa el caso en el que un coche abandona una plaza, en el otro caso dependo de la matrícula y se gestiona en otro lado.
-        if(idEstado == 0){
-            Optional<Estado> estadoLibre = estadoService.obtenerEstadoPorId(1);
-            plazaService.actualizarPlaza(plaza, estadoLibre.get());
-            //Publicar qué led hay que encender
-            String topicLed = "Led_"+plaza;
-            publishMessage(topicLed, String.valueOf(estadoLibre));
-        } 
+        String topicLed = "parking/Led_" + plaza;
+        // Solo me interesa el caso en el que un coche abandona una plaza, en el otro
+        // caso dependo de la matrícula y se gestiona en otro lado.
+        if (idEstado == 0) {
+            Estado ultimoEstado = getUltimoEstadoPlaza(plaza);
+            if (ultimoEstado != null) {
+                if (ultimoEstado.getId() == 4) {
+                    Optional<Estado> estadoReservado = estadoService.obtenerEstadoPorId(3);
+                    plazaService.actualizarPlaza(plaza, estadoReservado.get());
+                    publishMessage(topicLed, "3");
+
+                } else {
+                    Optional<Estado> estadoLibre = estadoService.obtenerEstadoPorId(1);
+                    plazaService.actualizarPlaza(plaza, estadoLibre.get());
+                    agregarEstadoAHistorial(plaza, estadoLibre.get());
+                    // Publicar qué led hay que encender
+                    publishMessage(topicLed, "1");
+                }
+            } else {
+                Optional<Estado> estadoLibre = estadoService.obtenerEstadoPorId(1);
+                plazaService.actualizarPlaza(plaza, estadoLibre.get());
+                agregarEstadoAHistorial(plaza, estadoLibre.get());
+                // Publicar qué led hay que encender
+                publishMessage(topicLed, "1");
+            }
+
+        }
     }
 
     public void procesarTopicMatricula(int idPlaza, String payload) {
-        System.out.println("Procesando matricula de la plaza "+ idPlaza+": "+payload);
+        System.out.println("Procesando matricula de la plaza " + idPlaza + ": " + payload);
         // Pensar la lógica
-        String topicLed = "Led_"+idPlaza;
+        String topicLed = "parking/Led_" + idPlaza;
         Optional<Plaza> plaza = plazaService.obtenerPlazaPorId(idPlaza);
-        if(plaza.isPresent()){
+        if (plaza.isPresent()) {
             Optional<Estado> estadoPlaza = estadoService.obtenerEstadoPorId(plaza.get().getEstado().getId());
             Optional<Estado> estadoOcupado = estadoService.obtenerEstadoPorId(2);
             Optional<Estado> estadoIlegal = estadoService.obtenerEstadoPorId(4);
-            System.out.println("PLAZA "+ plaza);
-            //Comprobamos si está reservada
-            if(estadoPlaza.isPresent()){
-                System.out.println("Estado plaza: "+ estadoPlaza.get().getNombre());
-                if(estadoPlaza.get().getId() == 3){
+            System.out.println("PLAZA " + plaza);
+            // Comprobamos si está reservada
+            if (estadoPlaza.isPresent()) {
+                System.out.println("Estado plaza: " + estadoPlaza.get().getNombre());
+                if (estadoPlaza.get().getId() == 3) {
                     boolean ocupacionLegal = reservaService.comprobarPlazaReservada(idPlaza, payload);
-                    if(ocupacionLegal){
-                        //El estado de la plaza y el led pasn a ocupado
+                    if (ocupacionLegal) {
+                        // El estado de la plaza y el led pasn a ocupado
                         System.out.println("OCUPACION LEGAL");
                         plazaService.actualizarPlaza(idPlaza, estadoOcupado.get());
-                        publishMessage(topicLed, String.valueOf(estadoOcupado));
-                    } else{
-                        //El estado de la plaza y led pasa a ilegal
+                        publishMessage(topicLed, "2");
+                        agregarEstadoAHistorial(idPlaza, estadoOcupado.get());
+                    } else {
+                        // El estado de la plaza y led pasa a ilegal
                         System.out.println("OCUPACION ILEGAL");
                         plazaService.actualizarPlaza(idPlaza, estadoIlegal.get());
-                        publishMessage(topicLed, String.valueOf(estadoIlegal));
+                        publishMessage(topicLed, "4");
+                        agregarEstadoAHistorial(idPlaza, estadoIlegal.get());
+
                     }
-                } else if(estadoPlaza.get().getId() == 1){
-                    //Plaza y led pasan a ocupado
+                } else if (estadoPlaza.get().getId() == 1) {
+                    // Plaza y led pasan a ocupado
                     System.out.println("OCUPACION LEGAL");
                     plazaService.actualizarPlaza(idPlaza, estadoOcupado.get());
-                    publishMessage(topicLed, String.valueOf(estadoOcupado));
+                    publishMessage(topicLed, "2");
+                    agregarEstadoAHistorial(idPlaza, estadoOcupado.get());
                 }
             }
         }
@@ -233,6 +260,45 @@ public class MqttService implements MqttCallback {
         } catch (InterruptedException e) {
             logger.error("Error durante la limpieza: {}", e.getMessage(), e);
             Thread.currentThread().interrupt();
+        }
+    }
+
+    public void agregarEstadoAHistorial(int plazaId, Estado estado) {
+        switch (plazaId) {
+            case 1:
+                historialPlaza1.push(estado);
+                break;
+            case 2:
+                historialPlaza2.push(estado);
+                break;
+            case 3:
+                historialPlaza3.push(estado);
+                break;
+            default:
+                logger.warn("Plaza desconocida: {}", plazaId);
+        }
+    }
+
+    private Estado getUltimoEstadoPlaza(int idPlaza) {
+        switch (idPlaza) {
+            case 1:
+                if (!historialPlaza1.empty()) {
+                    return historialPlaza1.peek();
+                }
+                return null;
+            case 2:
+                if (!historialPlaza2.empty()) {
+                    return historialPlaza1.peek();
+                }
+                return null;
+            case 3:
+                if (!historialPlaza3.empty()) {
+                    return historialPlaza1.peek();
+                }
+                return null;
+            default:
+                logger.warn("Plaza desconocida: {}", idPlaza);
+                return null;
         }
     }
 }

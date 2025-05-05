@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'token_service.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://10.0.2.2:8080/api';
+  static const String baseUrl = 'http://192.168.202.2:8080/api';
 
   static Future<Map<String, String>> _getHeaders() async {
     final token = await TokenService.getToken();
