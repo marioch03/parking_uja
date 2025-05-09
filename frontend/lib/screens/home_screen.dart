@@ -164,7 +164,7 @@ class HomeScreen extends StatelessWidget {
                                 _buildInfoItem(
                                   context,
                                   Icons.confirmation_number,
-                                  '5\nPlazas Totales',
+                                  '3\nPlazas Totales',
                                 ),
                                 Container(
                                   height: 40,

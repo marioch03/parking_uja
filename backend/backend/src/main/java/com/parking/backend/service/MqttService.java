@@ -60,9 +60,9 @@ public class MqttService implements MqttCallback {
 
             // Suscribirse a los topics al iniciar
             String[] topics = {
-                    "parking/Plaza_1", "parking/Plaza_2", "parking/Plaza_3",
-                    "parking/Matricula_1", "parking/Matricula_2", "parking/Matricula_3",
-                    "parking/Led_1", "parking/Led_2", "parking/Led_3"
+                    "parking/plaza/1", "parking/plaza/2", "parking/plaza/3",
+                    "parking/matricula/1", "parking/matricula/2", "parking/matricula/3",
+                    "parking/led/1", "parking/led/2", "parking/led/3"
             };
             int[] qos = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             mqttClient.subscribe(topics, qos);
@@ -112,31 +112,31 @@ public class MqttService implements MqttCallback {
     private void processMessage(String topic, String payload) {
         try {
             switch (topic) {
-                case "parking/Plaza_1":
+                case "parking/plaza/1":
                     procesarTopicPlaza(1, payload);
                     break;
-                case "parking/Plaza_2":
+                case "parking/plaza/2":
                     procesarTopicPlaza(2, payload);
                     break;
-                case "parking/Plaza_3":
+                case "parking/plaza/3":
                     procesarTopicPlaza(3, payload);
                     break;
-                case "parking/Matricula_1":
+                case "parking/matricula/1":
                     procesarTopicMatricula(1, payload);
                     break;
-                case "parking/Matricula_2":
+                case "parking/matricula/2":
                     procesarTopicMatricula(2, payload);
                     break;
-                case "parking/Matricula_3":
+                case "parking/matricula/3":
                     procesarTopicMatricula(3, payload);
                     break;
-                case "parking/Led_1":
+                case "parking/led/1":
                     logger.warn("Led 1: {}", String.valueOf(payload));
                     break;
-                case "parking/Led_2":
+                case "parking/led/2":
                     logger.warn("Led 2: {}", String.valueOf(payload));
                     break;
-                case "parking/Led_3":
+                case "parking/led/3":
                     logger.warn("Led 3: {}", String.valueOf(payload));
                     break;
                 default:
@@ -173,7 +173,7 @@ public class MqttService implements MqttCallback {
     public void procesarTopicPlaza(int plaza, String payload) {
         System.out.println("Procesando mensaje de la plaza: " + plaza);
         int idEstado = Integer.parseInt(payload);
-        String topicLed = "parking/Led_" + plaza;
+        String topicLed = "parking/led/" + plaza;
         // Solo me interesa el caso en el que un coche abandona una plaza, en el otro
         // caso dependo de la matrícula y se gestiona en otro lado.
         if (idEstado == 0) {
@@ -182,7 +182,9 @@ public class MqttService implements MqttCallback {
                 if (ultimoEstado.getId() == 4) {
                     Optional<Estado> estadoReservado = estadoService.obtenerEstadoPorId(3);
                     plazaService.actualizarPlaza(plaza, estadoReservado.get());
+                    agregarEstadoAHistorial(plaza, estadoReservado.get());
                     publishMessage(topicLed, "3");
+
 
                 } else {
                     Optional<Estado> estadoLibre = estadoService.obtenerEstadoPorId(1);
@@ -205,7 +207,7 @@ public class MqttService implements MqttCallback {
     public void procesarTopicMatricula(int idPlaza, String payload) {
         System.out.println("Procesando matricula de la plaza " + idPlaza + ": " + payload);
         // Pensar la lógica
-        String topicLed = "parking/Led_" + idPlaza;
+        String topicLed = "parking/led/" + idPlaza;
         Optional<Plaza> plaza = plazaService.obtenerPlazaPorId(idPlaza);
         if (plaza.isPresent()) {
             Optional<Estado> estadoPlaza = estadoService.obtenerEstadoPorId(plaza.get().getEstado().getId());
@@ -267,6 +269,7 @@ public class MqttService implements MqttCallback {
         switch (plazaId) {
             case 1:
                 historialPlaza1.push(estado);
+                System.out.println("PILA DE LA PLAZA 1: "+historialPlaza1.toString());
                 break;
             case 2:
                 historialPlaza2.push(estado);

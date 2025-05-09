@@ -127,7 +127,7 @@ public class BackendController {
         reservaService.guardarReserva(nueva_Reserva);
         Optional<Estado> estadoReservado = estadoService.obtenerEstadoPorId(3);
         plazaService.actualizarPlaza(plaza, estadoReservado.get());
-        String topicLed = "parking/Led_" + plaza_a_reservar.get().getId();
+        String topicLed = "parking/led/" + plaza_a_reservar.get().getId();
         mqttService.publishMessage(topicLed, "3");
         mqttService.agregarEstadoAHistorial(plaza, estadoReservado.get());
         // devuelvo confirmacion
@@ -154,7 +154,7 @@ public class BackendController {
         if (reserva.isPresent()) {
             Plaza plazaReserva = reserva.get().getPlaza();
             if (reservaService.eliminarReserva(id)) {
-                String topic = "parking/Led_" + plazaReserva.getId();
+                String topic = "parking/led/" + plazaReserva.getId();
                 mqttService.publishMessage(topic, "1");
                 return ResponseEntity.ok(new ApiResponse(true, "Reserva eliminada correctamente"));
             }
